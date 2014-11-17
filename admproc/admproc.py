@@ -4,6 +4,9 @@ import numpy
 def _adm_header(file):
     """find column headers in admittance file"""
     for i, line in enumerate(file, 1):
+        if '#Epsilon' in line:
+            area = float(line.split('\t')[1].split('=')[1])
+            eps = float(line.split('\t')[2].split('=')[1])      
         if line.startswith('#Temp'):
             #read frequencies form header line
             freq = []
@@ -14,7 +17,7 @@ def _adm_header(file):
             break
     else:
         raise ValueError('Header line not found. End of file reached')
-    return i, freq
+    return i, freq, area, eps
 
 def read(fname):
     """read data array from admittance file
@@ -28,20 +31,22 @@ def read(fname):
     -------
     data : numpy array
     freq : float, frequency
+    area : float, area of contact
+    eps : float, epsilon - relative permittivity of material
     
     """
     
     #Support of in memory archive extraction
     try:
         with open(fname) as file:
-            header_line, freq= _adm_header(file)
+            header_line, freq, area, eps = _adm_header(file)
    
     except TypeError:
-        header_line, freq = _adm_header(fname)
+        _, freq, area, eps = _adm_header(fname)
         header_line = 0
     
     data = numpy.genfromtxt(fname, skip_header=header_line)
-    return data, freq
+    return data, freq, area, eps
 
 def extract(data, freq, fsel=None, vsel=None, tsel=None):
     """extract capacitance and conductance form data array. 
