@@ -9,11 +9,11 @@ from Admittance program.
 =========== ======================================================
  functions
 =========== ======================================================
-
-
+read        read data array from admittance file
+extract     extract capacitance and conductance form data array
 =========== ======================================================
 
 """
 
 
-from admproc import 
+from admproc import read, extract
