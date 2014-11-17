@@ -59,6 +59,8 @@ def extract(data, freq, fsel=None, vsel=None, tsel=None):
     -------
     cap : float, capacitance
     cond : float, conductance
+    voltage : float, voltage
+    temp : float, temperature
     
     """
     
@@ -99,4 +101,5 @@ def extract(data, freq, fsel=None, vsel=None, tsel=None):
         #read C-f and G-f
         cap = data[k+i, 2:freq.shape[0]+2]
         cond = data[k+i, 2+freq.shape[0]:]
-    return cap, cond
+    return cap, cond, voltage, temp
+
