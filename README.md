@@ -7,6 +7,6 @@ AdmProc is Python module for processing measurement files from Admittance progra
 import admproc
 
 data, freq = admproc.read(file_name)
-cap, cond = admproc.extract(data, freq, tsel=300, fsel=500000)
+cap, cond, voltage, temp = admproc.extract(data, freq, tsel=300, fsel=500000)
 
 ```
