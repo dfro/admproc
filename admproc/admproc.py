@@ -82,23 +82,23 @@ def extract(data, freq, fsel=None, vsel=None, tsel=None):
 
 
     if not tsel:
+        #read C-T and G-T
         i = numpy.argmin(abs(voltage - vsel))
         j = numpy.argmin(abs(freq - fsel))
-        #read C-T and G-T
         if not vsel and not fsel:
             raise ValueError('at least two parameters should be specified')
         cap = data[i::voltage.shape[0],j+2]
         cond = data[i::voltage.shape[0],j+freq.shape[0]+2]
     if not vsel:
+        #read C-V and G-V
         j = numpy.argmin(abs(freq - fsel))
         k = numpy.argmin(abs(temp - tsel))*voltage.shape[0]
-        #read C-V and G-V
         cap = data[k:k+voltage.shape[0],j+2]
         cond = data[k:k+voltage.shape[0],j+freq.shape[0]+2]
     if not fsel:
+        #read C-f and G-f
         i = numpy.argmin(abs(voltage - vsel))
         k = numpy.argmin(abs(temp - tsel))*voltage.shape[0]
-        #read C-f and G-f
         cap = data[k+i, 2:freq.shape[0]+2]
         cond = data[k+i, 2+freq.shape[0]:]
     return cap, cond, voltage, temp
