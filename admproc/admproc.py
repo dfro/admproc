@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
 import numpy
 
+
 def _adm_header(file):
     """find column headers in admittance file"""
+    area = 0
+    eps = 0
     for i, line in enumerate(file, 1):
         if '#Epsilon' in line:
+            # used in old version of admfile
             area = float(line.split('\t')[1].split('=')[1])
-            eps = float(line.split('\t')[2].split('=')[1])      
+            eps = float(line.split('\t')[2].split('=')[1])
+        if line.startswith('area ='):
+            area = float(line.split('=')[1])
+        if line.startswith('epsilon ='):
+            eps = float(line.split('=')[1])
         if line.startswith('#Temp'):
-            #read frequencies form header line
+            # read frequencies form header line
             freq = []
             for column in line.split('\t'):
                 if column.startswith('#C'):
@@ -18,6 +26,7 @@ def _adm_header(file):
     else:
         raise ValueError('Header line not found. End of file reached')
     return i, freq, area, eps
+
 
 def read(fname):
     """read data array from admittance file
@@ -36,7 +45,7 @@ def read(fname):
     
     """
     
-    #Support of in memory archive extraction
+    # Support of in memory archive extraction
     try:
         with open(fname) as file:
             header_line, freq, area, eps = _adm_header(file)
@@ -47,6 +56,7 @@ def read(fname):
     
     data = numpy.genfromtxt(fname, skip_header=header_line)
     return data, freq, area, eps
+
 
 def extract(data, freq, fsel=None, vsel=None, tsel=None):
     """extract capacitance and conductance form data array. 
@@ -68,40 +78,42 @@ def extract(data, freq, fsel=None, vsel=None, tsel=None):
     temp : float, temperature
     
     """
-    
-    #read voltages 
+    cap = []
+    cond = []
+
+    # read voltages
     voltage = []
-    SingleTemp = False
-    for i in range(len(data[:,0])):
-        if data[i,0] != data[0,0]:
+    single_temp = False
+    for i in range(len(data[:, 0])):
+        if data[i, 0] != data[0, 0]:
             break
-        voltage.append(round(data[i,1],6))
+        voltage.append(round(data[i, 1], 6))
 
     else:
-        #only one temperature in file
-        SingleTemp = True
+        # only one temperature in file
+        single_temp = True
     voltage = numpy.array(voltage)
     
-    #read temperature
-    temp = data[0::voltage.shape[0],0]
+    # read temperature
+    temp = data[0::voltage.shape[0], 0]
 
 
     if not tsel:
-        #read C-T and G-T
+        # read C-T and G-T
         i = numpy.argmin(abs(voltage - vsel))
         j = numpy.argmin(abs(freq - fsel))
         if not vsel and not fsel:
             raise ValueError('at least two parameters should be specified')
-        cap = data[i::voltage.shape[0],j+2]
-        cond = data[i::voltage.shape[0],j+freq.shape[0]+2]
+        cap = data[i::voltage.shape[0], j+2]
+        cond = data[i::voltage.shape[0], j+freq.shape[0]+2]
     if not vsel:
-        #read C-V and G-V
+        # read C-V and G-V
         j = numpy.argmin(abs(freq - fsel))
         k = numpy.argmin(abs(temp - tsel))*voltage.shape[0]
-        cap = data[k:k+voltage.shape[0],j+2]
-        cond = data[k:k+voltage.shape[0],j+freq.shape[0]+2]
+        cap = data[k:k+voltage.shape[0], j+2]
+        cond = data[k:k+voltage.shape[0], j+freq.shape[0]+2]
     if not fsel:
-        #read C-f and G-f
+        # read C-f and G-f
         i = numpy.argmin(abs(voltage - vsel))
         k = numpy.argmin(abs(temp - tsel))*voltage.shape[0]
         cap = data[k+i, 2:freq.shape[0]+2]
