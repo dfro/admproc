@@ -5,6 +5,6 @@ setup(name='admproc',
       description='Admittance measurement file process',
       author='Dmitry Folov',
       license='MIT',
-      packages=['admproc']
+      packages=['admproc'],
+      install_requires=['numpy'],
       )
-      
