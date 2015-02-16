@@ -92,10 +92,16 @@ def extract(data, freq, fsel=None, vsel=None, tsel=None):
     else:
         # only one temperature in file
         single_temp = True
+        tsel = data[0, 0]
     voltage = numpy.array(voltage)
     
     # read temperature
     temp = data[0::voltage.shape[0], 0]
+
+    if freq.shape[0] == 1:
+        fsel = freq[0]
+    if voltage.shape[0] == 1:
+        vsel = voltage[0]
 
 
     if not tsel:
