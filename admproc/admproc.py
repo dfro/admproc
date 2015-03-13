@@ -2,6 +2,45 @@
 import numpy
 
 
+class Data(object):
+    """Class for adm data file
+
+     attributes:
+     """
+    def __init__(self, fname):
+        self.data, self.freq, self.area, self.eps = read(fname)
+        self.fsel = None
+        self.vsel = None
+        self.tsel = None
+        if self.freq.shape[0] == 1:
+            self.fsel = self.freq[0]
+
+    def extract(self, fsel=None, vsel=None, tsel=None):
+        if fsel is not None:
+            self.fsel = fsel
+        if vsel is not None:
+            self.vsel = vsel
+        if tsel is not None:
+            self.tsel = tsel
+        extr_data = extract(self.data, self.freq, self.fsel, self.vsel, self.tsel)
+        self.cap = extr_data[0]
+        self.cond = extr_data[1]
+        self.voltage = extr_data[2]
+        self.temp = extr_data[3]
+        # dissipation factor
+        self.diss = self.cond/(2*numpy.pi*self.fsel*self.cap)
+
+    def cp(self, fsel=None, vsel=None, tsel=None):
+        """exact parallel capacitance"""
+        self.extract(fsel, vsel, tsel)
+        return self.cap
+
+    def cs(self, fsel=None, vsel=None, tsel=None):
+        """exact serial capacitance"""
+        self.extract(fsel, vsel, tsel)
+        return self.cap*(1 + self.diss**2)
+
+
 def _adm_header(file):
     """find column headers in admittance file"""
     area = 0
