@@ -16,4 +16,4 @@ extract     extract capacitance and conductance form data array
 """
 
 
-from admproc.admproc import read, extract, Data
+from admproc.admproc import read, extract, nxcalc, Data
