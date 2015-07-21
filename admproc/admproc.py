@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy
+e = 1.602176565e-19  # elementary charge in C
+eps0 = 8.854187817e-14  # vacuum permittivity in F/cm
 
 
 class Data(object):
@@ -98,7 +100,7 @@ def read(fname):
 
 
 def extract(data, freq, fsel=None, vsel=None, tsel=None):
-    """extract capacitance and conductance form data array. 
+    """extract capacitance and conductance form data array.
     NOTE: at least two of sel parameters should be specified.
     
     Parameters
@@ -164,3 +166,24 @@ def extract(data, freq, fsel=None, vsel=None, tsel=None):
         cond = data[k+i, 2+freq.shape[0]:]
     return cap, cond, voltage, temp
 
+def nxcalc(cap, volt, area, eps=12):
+    """Calculates doping concentration profile form CV characteristic
+
+    Parameters
+    ----------
+    cap: array
+    volt: array
+    area: float, contact area
+    eps: float, dielectric permittivity of material
+
+    Returns
+    -------
+    dop: array, doping concentration
+    width: array, width of space charge
+
+    """
+    dC = (cap[1:]-cap[:-1])/(volt[1:]-volt[:-1])
+    C = (cap[1:]+cap[:-1])/2
+    dop = C**3/(dC*e*eps0*eps*area**2)
+    width = eps0*eps*area/C
+    return dop, width
