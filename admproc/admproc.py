@@ -166,24 +166,25 @@ def extract(data, freq, fsel=None, vsel=None, tsel=None):
         cond = data[k+i, 2+freq.shape[0]:]
     return cap, cond, voltage, temp
 
+
 def nxcalc(cap, volt, area, eps=12):
     """Calculates doping concentration profile form CV characteristic
 
     Parameters
     ----------
-    cap: array
-    volt: array
-    area: float, contact area
+    cap: array, capacitance in F
+    volt: array, voltage in V
+    area: float, contact area in cm^2
     eps: float, dielectric permittivity of material
 
     Returns
     -------
-    dop: array, doping concentration
-    width: array, width of space charge
+    dop: array, doping concentration in cm^-3
+    width: array, width of space charge in nm
 
     """
     dC = (cap[1:]-cap[:-1])/(volt[1:]-volt[:-1])
     C = (cap[1:]+cap[:-1])/2
     dop = C**3/(dC*e*eps0*eps*area**2)
-    width = eps0*eps*area/C
+    width = 1e7*eps0*eps*area/C
     return dop, width
