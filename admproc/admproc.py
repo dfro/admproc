@@ -99,7 +99,7 @@ def read(fname):
     return data, freq, area, eps
 
 
-def extract(data, freq, fsel=None, vsel=None, tsel=None):
+def extract(data, freq, fsel=None, vsel=None, tsel=None, model='Cp'):
     """extract capacitance and conductance form data array.
     NOTE: at least two of sel parameters should be specified.
     
@@ -110,6 +110,7 @@ def extract(data, freq, fsel=None, vsel=None, tsel=None):
     tsel : float, selected temperature
     data : array from read_data function
     freq : array from read_data function
+    model : str, 'Cp' or 'Cs' - model for capacitance calculation
     
     Returns
     -------
@@ -119,6 +120,8 @@ def extract(data, freq, fsel=None, vsel=None, tsel=None):
     temp : float, temperature
     
     """
+    if model not in {'Cp', 'Cs'}:
+        raise ValueError('variable model should be Cp or Cs')
     cap = []
     cond = []
 
@@ -164,6 +167,10 @@ def extract(data, freq, fsel=None, vsel=None, tsel=None):
         k = numpy.argmin(abs(temp - tsel))*voltage.shape[0]
         cap = data[k+i, 2:freq.shape[0]+2]
         cond = data[k+i, 2+freq.shape[0]:]
+
+    if model is 'Cs':
+        dis = cond/(fsel*cap)
+        cap *= (1+dis**2)
     return cap, cond, voltage, temp
 
 
