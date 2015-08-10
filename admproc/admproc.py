@@ -169,7 +169,7 @@ def extract(data, freq, fsel=None, vsel=None, tsel=None, model='Cp'):
         cond = data[k+i, 2+freq.shape[0]:]
 
     if model is 'Cs':
-        dis = cond/(fsel*cap)
+        dis = cond/(2*numpy.pi*freq*cap)
         cap *= (1+dis**2)
     return cap, cond, voltage, temp
 
