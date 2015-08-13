@@ -1,0 +1,14 @@
+[sample]
+name = "sample_name"
+description = "experiment description"
+area = 0.1
+epsilon = 10
+
+[settings]
+FunctionMode = "Cp-G"
+LevelAC = 0.01
+G/2pif = FALSE
+
+[data]
+#Temp. (K)	#Bias (V)	#C 20 Hz 	#C 100 Hz 	#C 1000 Hz 	#G 20 Hz 	#G 100 Hz 	#G 1000 Hz 
+3E+2	-2E-1	1.76841E-8	7.52769E-9	2.46918E-9	7.27778E-10	2.08698E-10	5.05154E-11
