@@ -95,7 +95,7 @@ def read(fname):
         _, freq, area, eps = _adm_header(fname)
         header_line = 0
     
-    data = numpy.genfromtxt(fname, skip_header=header_line)
+    data = numpy.atleast_2d(numpy.genfromtxt(fname, skip_header=header_line))
     return data, freq, area, eps
 
 
@@ -128,15 +128,15 @@ def extract(data, freq, fsel=None, vsel=None, tsel=None, model='Cp'):
     # read voltages
     voltage = []
     single_temp = False
-    for i in range(len(data[:, 0])):
+    for i, d in enumerate(data[:, 0]):
         if data[i, 0] != data[0, 0]:
             break
         voltage.append(round(data[i, 1], 6))
-
     else:
         # only one temperature in file
         single_temp = True
         tsel = data[0, 0]
+
     voltage = numpy.array(voltage)
     
     # read temperature
