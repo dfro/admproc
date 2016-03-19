@@ -42,3 +42,19 @@ class TestAdmproc(TestCase):
         self.assertTrue(np.allclose(freq, freq_ref))
         self.assertTrue(np.allclose(voltage, voltage_ref))
         self.assertTrue(np.allclose(temp, 300))
+
+    def test_nxcalc(self):
+        volt = np.array([0.75, 0.65, 0.55, 0.45, 0.35, 0.25])
+        cap = np.array([0.11543373, 0.1259744, 0.14012403,
+                        0.16048704, 0.19359813, 0.26199768])
+        dop_ref = -1e17
+        width_ref =np.array([85.82477936, 77.861412, 68.92227719,
+                            58.5136042, 45.47627313])
+
+        dop, width = admproc.nxcalc(cap*1e-6, volt, area=1, eps=11.7)
+
+        self.assertTrue(np.allclose(width, width_ref))
+        self.assertTrue(np.allclose(dop, dop_ref*np.ones(5),rtol=0.1))
+
+    def test_openzip(self):
+        pass
